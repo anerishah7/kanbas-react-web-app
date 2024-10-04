@@ -35,7 +35,7 @@ export default function AssignmentEditor() {
                     
                     </div>
                     <div className="col-12 col-md-3 col-xl-10">
-                    <select id="wd-group" className="form-control">
+                    <select id="wd-group" className="form-select">
                         <option selected value="ASSIGNMENTS">ASSIGNMENTS </option>
                         <option value="QUIZ">QUIZ </option>
                         <option value="LABS">LABS </option>
@@ -52,7 +52,7 @@ export default function AssignmentEditor() {
                     
                     </div>
                     <div className="col-12 col-md-3 col-xl-10">
-                    <select id="wd-display-grade-as" className="form-control">
+                    <select id="wd-display-grade-as" className="form-select">
                         <option selected value="PERCENTAGE">PERCENTAGE</option>
                         <option value="GRADE">GRADE</option>
                         <option value="GPA">GPA</option>
@@ -69,7 +69,7 @@ export default function AssignmentEditor() {
                     </div>
                     <div className="col-12 col-md-3 col-xl-10 padded border">
                             <div className="row-2">
-                            <select id="wd-submission-type" className="form-control">
+                            <select id="wd-submission-type" className="form-select">
                             <option selected value="ONLINE">ONLINE</option>
                             <option value="IN PERSON">IN PERSON</option>
                             </select>
@@ -106,7 +106,9 @@ export default function AssignmentEditor() {
                     <div className="col-12 col-md-3 col-xl-10 padded border">
                             <div className="row-2">
                             <label htmlFor="wd-assign-to"><b>Assign To</b></label> <br/>
-                            <input id="wd-assign-to" value="Everyone" className="form-control"/>
+                            <select id="wd-assign-to" className="form-select">
+                            <option selected value="Everyone">Everyone</option>
+                            </select>
                             </div>
 
                             <div className="row">
