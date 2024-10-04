@@ -1,38 +1,67 @@
+import AssignmentControls from "./AssignmentControls";
+import AssignmentControlButtons from "./AssignmentControlButtons";
+import LessonControlButtons from "../Modules/LessonControlButtons";
+import { BsGripVertical } from "react-icons/bs";
+import { IoMdArrowDropdown } from "react-icons/io";
+import { HiOutlinePencilSquare } from "react-icons/hi2";
+
 export default function Assignments() {
-    return (
-      <div id="wd-assignments">
-        <input id="wd-search-assignment"
-               placeholder="Search for Assignments" />
-        <button id="wd-add-assignment-group">+ Group</button>
-        <button id="wd-add-assignment">+ Assignment</button>
-        <h3 id="wd-assignments-title">
-          ASSIGNMENTS 40% of Total <button>+</button>
-        </h3>
-        <ul id="wd-assignment-list">
-          <li className="wd-assignment-list-item">
-            <a className="wd-assignment-link"
-              href="#/Kanbas/Courses/1234/Assignments/123">
-              A1 - ENV + HTML
-            </a>
-            <p>Multiple Modules | <b>Not available until</b> May 6 at 12:00 am <br/>
-            <b>Due </b> May 13 at 11:59pm | 100 pts</p>
-          </li>
-          <li className="wd-assignment-list-item">
-            <a className="wd-assignment-link"
-              href="#/Kanbas/Courses/1234/Assignments/123">
-              A2 - CSS + BOOTSTRAP
-            </a>
-            <p>Multiple Modules | <b>Not available until</b> May 13 at 12:00 am <br/>
-            <b>Due </b> May 20 at 11:59pm | 100 pts</p>
-          </li>
-          <li className="wd-assignment-list-item">
-            <a className="wd-assignment-link"
-              href="#/Kanbas/Courses/1234/Assignments/123">
-              A1 - JAVASCRIPT + REACT
-            </a>
-            <p>Multiple Modules | <b>Not available until</b> May 20 at 12:00 am <br/>
-            <b>Due </b> May 27 at 11:59pm | 100 pts</p>
+  return (
+    <div>
+      <AssignmentControls /><br /><br />
+      <ul id="wd-assignments" className="list-group rounded-0">
+          <li className="wd-assignment list-group-item p-0 mb-5 fs-5 border-gray">
+            <div className="wd-title p-3 ps-2 bg-secondary">
+            <BsGripVertical className="me-2 fs-3" />
+            <IoMdArrowDropdown className="me-2 fs-3" />
+             <b>ASSIGNMENTS</b>
+             <AssignmentControlButtons/>
+             </div>
+            <ul className="wd-lessons list-group rounded-0">
+              <li className="wd-lesson list-group-item p-3 ps-1">
+                <table border={0} width="100%">
+                  <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
+                  <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
+                  <td><table >
+                      <tr> <a className="black"
+                      href="#/Kanbas/Courses/1234/Assignments/123">
+                    <b>A1</b> </a></tr>
+                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 6 at 12:00 am | </tr>
+                      <tr><b>Due</b> May 13 at 11:59 pm | 100 pts</tr>
+                  </table></td>
+                  <td valign = "middle"><LessonControlButtons /></td>
+                </table>
+                </li>
+                <li className="wd-lesson list-group-item p-3 ps-1">
+                <table border={0} width="100%">
+                  <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
+                  <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
+                  <td><table >
+                  <tr> <a className="black"
+                      href="#/Kanbas/Courses/1234/Assignments/123">
+                    <b>A2</b> </a></tr>
+                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 13 at 12:00 am | </tr>
+                      <tr><b>Due</b> May 20 at 11:59 pm | 100 pts</tr>
+                  </table></td>
+                  <td valign = "middle"><LessonControlButtons /></td>
+                </table>
+                </li>
+                <li className="wd-lesson list-group-item p-3 ps-1">
+                <table border={0} width="100%">
+                  <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
+                  <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
+                  <td><table >
+                  <tr> <a className="black"
+                      href="#/Kanbas/Courses/1234/Assignments/123">
+                    <b>A3</b> </a></tr>
+                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 20 at 12:00 am | </tr>
+                      <tr><b>Due</b> May 27 at 11:59 pm | 100 pts</tr>
+                  </table></td>
+                  <td valign = "middle"><LessonControlButtons /></td>
+                </table>
+                </li>
+            </ul>
           </li>
         </ul>
-      </div>
-);}  
+    </div>
+);}
