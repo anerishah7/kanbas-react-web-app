@@ -1,17 +1,19 @@
+import { useParams } from "react-router";
+import * as db from "../../Database";
+import { Link } from "react-router-dom";
+
 export default function AssignmentEditor() {
+    const { cid } = useParams();
+    const { aid } = useParams();
+    const assignment = db.assignments
+                        .filter((assignment: any) => assignment._id === aid);
     return (
         <div id="wd-assignments-editor">
             <form id="wd-text-fields">
                 <label htmlFor="wd-name">Assignment Name</label><br />
-                <input id="wd-name" className="form-control" value="A1 - ENV + HTML"/><br />
+                <input id="wd-name" className="form-control" value={`${assignment[0].title}`}/><br />
                 <textarea id="wd-description" className="form-control" rows={10}>
-                    The assignment is available online. 
-                    Submit a link to the landing page of our own web application 
-                    running in Netlify. 
-                    The landing page should include the following:
-                    - A brief description of the application
-                    - A link to the GitHub repository
-                    The Kanbas application should include link back to landing page.
+                    {assignment[0].description}
                 </textarea>
                 <br />
                 
@@ -23,7 +25,7 @@ export default function AssignmentEditor() {
                     
                     </div>
                     <div className="col-12 col-md-3 col-xl-10">
-                    <input id="wd-points" value={100} className="form-control"/>
+                    <input id="wd-points" value={`${assignment[0].points}`} className="form-control"/>
                     </div>
                 </div>
 
@@ -114,29 +116,25 @@ export default function AssignmentEditor() {
                             <div className="row">
                             <div className="col-12 col-md-2 col-xl-4 padded">
                                 <label htmlFor="wd-due-date"><b>Due</b></label> <br/>
-                                <input type="date" id="wd-due-date" value="2023-05-13" className="form-control"/>
+                                <input type="date" id="wd-due-date" value={`${assignment[0].due_date.replaceAll('/', '-')}`} className="form-control"/>
                             </div>
                             <div className="col-12 col-md-2 col-xl-4 padded">
                                 <label htmlFor="wd-available-from"><b>Available From</b></label> <br/>
-                                <input type="date" id="wd-available-from" value="2023-05-06" className="form-control"/>
+                                <input type="date" id="wd-available-from" value={`${assignment[0].start_date.replaceAll('/', '-')}`} className="form-control"/>
                             </div>
                             <div className="col-12 col-md-2 col-xl-4 padded">
                                 <label htmlFor="wd-available-until"><b>Until</b></label> <br/>
-                                <input type="date" id="wd-available-until" value="2023-05-20" className="form-control"/>
+                                <input type="date" id="wd-available-until" value={`${assignment[0].due_date.replaceAll('/', '-')}`} className="form-control"/>
                             </div>
                             </div>
-                            
+
                     </div>
                 </div>
                 <hr/>
 
                 <div className="text-nowrap">
-                <button id="wd-cancel" className="btn btn-danger me-1 float-end">
-                    Save
-                </button>
-                <button id="wd-submit" className="btn btn-secondary me-1 float-end">
-                    Cancel
-                </button>
+                <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-danger me-1 float-end">Save</Link>
+                <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-secondary me-1 float-end">Cancel</Link>
                 </div>
                 
             </form>
