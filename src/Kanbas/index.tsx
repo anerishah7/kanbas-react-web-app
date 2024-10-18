@@ -8,12 +8,7 @@ import "./styles.css";
 export default function Kanbas() {
   return (
     <div id="wd-kanbas">
-      {/* <table> */}
-        {/* <tr> */}
-          {/* <td valign="top"> */}
             <KanbasNavigation />
-          {/* </td>
-          <td valign="top"> */}
           <div className="wd-main-content-offset p-3">
           <Routes>
               <Route path="/" element={<Navigate to="/Kanbas/Dashboard" />} />
@@ -24,9 +19,6 @@ export default function Kanbas() {
               <Route path="/Inbox" element={<h1>Inbox</h1>} />
             </Routes>
           </div>
-          {/* </td>
-        </tr>
-      </table> */}
     </div>
   );
 }

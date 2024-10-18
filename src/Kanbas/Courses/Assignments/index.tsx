@@ -5,7 +5,12 @@ import { BsGripVertical } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 
+import { useParams } from "react-router";
+import * as db from "../../Database";
+
 export default function Assignments() {
+  const { cid } = useParams();
+  const assignments = db.assignments;
   return (
     <div>
       <AssignmentControls /><br /><br />
@@ -18,48 +23,30 @@ export default function Assignments() {
              <AssignmentControlButtons/>
              </div>
             <ul className="wd-lessons list-group rounded-0">
-              <li className="wd-lesson list-group-item p-3 ps-1">
-                <table border={0} width="100%">
-                  <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
-                  <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
-                  <td><table >
-                      <tr> <a className="black"
-                      href="#/Kanbas/Courses/1234/Assignments/123">
-                    <b>A1</b> </a></tr>
-                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 6 at 12:00 am | </tr>
-                      <tr><b>Due</b> May 13 at 11:59 pm | 100 pts</tr>
-                  </table></td>
-                  <td valign = "middle"><LessonControlButtons /></td>
-                </table>
-                </li>
+            {assignments
+              .filter((assignment: any) => assignment.course === cid)
+              .map((assignment: any) => (
                 <li className="wd-lesson list-group-item p-3 ps-1">
                 <table border={0} width="100%">
                   <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
                   <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
                   <td><table >
-                  <tr> <a className="black"
-                      href="#/Kanbas/Courses/1234/Assignments/123">
-                    <b>A2</b> </a></tr>
-                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 13 at 12:00 am | </tr>
-                      <tr><b>Due</b> May 20 at 11:59 pm | 100 pts</tr>
+                      <tr>
+                         <a className="black"
+                      href={`#/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}>
+                    {assignment.title} </a>
+                    </tr>
+                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until </b> 
+                      {new Date(assignment.start_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })}  
+                      &nbsp; at 12:00 am | </tr>
+                      <tr><b>Due </b> 
+                      {new Date(assignment.due_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric' })} 
+                      &nbsp; at 11:59 pm | {assignment.points} pts</tr>
                   </table></td>
                   <td valign = "middle"><LessonControlButtons /></td>
                 </table>
                 </li>
-                <li className="wd-lesson list-group-item p-3 ps-1">
-                <table border={0} width="100%">
-                  <td valign = "middle"><BsGripVertical className="me-2 fs-3" /></td>
-                  <td valign = "middle"><HiOutlinePencilSquare className="me-2 fs-3 green" /></td>
-                  <td><table >
-                  <tr> <a className="black"
-                      href="#/Kanbas/Courses/1234/Assignments/123">
-                    <b>A3</b> </a></tr>
-                      <tr> <span className="red">Multiple Modules </span>| <b>Not available until</b> May 20 at 12:00 am | </tr>
-                      <tr><b>Due</b> May 27 at 11:59 pm | 100 pts</tr>
-                  </table></td>
-                  <td valign = "middle"><LessonControlButtons /></td>
-                </table>
-                </li>
+                 ))}
             </ul>
           </li>
         </ul>
