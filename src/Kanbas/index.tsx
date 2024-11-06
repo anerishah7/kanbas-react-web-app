@@ -9,7 +9,7 @@ import { useState } from "react";
 import store from "./store";
 import { Provider } from "react-redux";
 import ProtectedRoute from "./Account/ProtectedRoute";
-import ProtectedRouteCourse from "./Account/ProtectedRouteCourse";
+import ProtectedRouteCourse from "./Account/ProtectedRouteCourse"; 
 
 export default function Kanbas() {
   const [courses, setCourses] = useState<any[]>(db.courses);
@@ -26,7 +26,7 @@ export default function Kanbas() {
   const updateCourse = () => {
     setCourses(
       courses.map((c) => {
-        if (c._id === course._id) {
+        if (c._id === course._id) { 
           return course;
         } else {
           return c;
