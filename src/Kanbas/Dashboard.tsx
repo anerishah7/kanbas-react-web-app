@@ -49,12 +49,12 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
       <div className="row row-cols-1 row-cols-md-5 g-4">
         {/* Show only Enrolled Courses */}
       {enroll_button_click>=2 && 
-      courses.filter((course) =>
-          enrollments.some(
-            (enrollment: { user: any; course: any; }) =>
-              enrollment.user === currentUser._id &&
-              enrollment.course === course._id
-          ))
+      courses
+      // .filter((course) =>
+      //     enrollments.some(
+      //       (enrollment: { user: any; course: any; }) =>
+      //         enrollment.user === currentUser._id &&
+      //         enrollment.course === course._id))
         .map((course) => (
         <div className="wd-dashboard-course col" style={{ width: "300px" }}>
         <div className="card rounded-3 overflow-hidden">
