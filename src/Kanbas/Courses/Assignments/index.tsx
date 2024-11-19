@@ -5,22 +5,47 @@ import { BsGripVertical } from "react-icons/bs";
 import { IoMdArrowDropdown } from "react-icons/io";
 import { HiOutlinePencilSquare } from "react-icons/hi2";
 import { useParams } from "react-router";
-import { deleteAssignment } from "./reducer";
+import { addAssignment, deleteAssignment, setAssignments, updateAssignment } from "./reducer";
 import { useSelector, useDispatch } from "react-redux";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProtectedRouteFaculty from "../ProtectedRouteFaculty";
 import { FaTrash } from "react-icons/fa";
 import DeleteAssignment from "./DeleteAssignment";
 import { Link } from "react-router-dom";
+import * as coursesClient from "../client";
+import * as assignmentsClient from "./client";
 
 export default function Assignments() {
   const { cid } = useParams();
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
   const [assignmentId, setAssignmentId] = useState("");
   const dispatch = useDispatch();
+  const fetchAssignments = async () => {
+    const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
+    dispatch(setAssignments(assignments));
+  };
+  const createAssignmentForCourse = async () => {
+    if (!cid) return;
+    const newAssignment = { 
+      title: "New Assignment", 
+      course: cid, 
+      description: "New Description",
+      points: 100,
+      start_date: new Date().toISOString().slice(0, 10),
+      due_date: new Date().toISOString().slice(0, 10)};
+    const assignment = await coursesClient.createAssignmentForCourse(cid, newAssignment);
+    dispatch(addAssignment(assignment));
+  };
+  const removeAssignment = async (assignmentId: string) => {
+    await assignmentsClient.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+  };
+  useEffect(() => {
+    fetchAssignments();
+  }, []);
   return (
     <div>
-      <AssignmentControls /><br /><br />
+      <AssignmentControls addAssignment={createAssignmentForCourse}/><br /><br />
       <ul id="wd-assignments" className="list-group rounded-0">
           <li className="wd-assignment list-group-item p-0 mb-5 fs-5 border-gray">
             <div className="wd-title p-3 ps-2 bg-secondary">
@@ -31,7 +56,7 @@ export default function Assignments() {
              </div>
             <ul className="wd-lessons list-group rounded-0">
             {assignments
-              .filter((assignment: any) => assignment.course === cid)
+              // .filter((assignment: any) => assignment.course === cid)
               .map((assignment: any) => (
                 <li className="wd-lesson list-group-item p-3 ps-1">
                 <table border={0} width="100%">
@@ -40,7 +65,6 @@ export default function Assignments() {
                   <td><table >
                       <tr>
                     <Link className="black"
-                    // onClick={() => dispatch(setAssignment(assignment))}
                     to={`/Kanbas/Courses/${cid}/Assignments/${assignment._id}`}
                         >
                     {assignment.title}
@@ -59,7 +83,7 @@ export default function Assignments() {
                     data-bs-toggle="modal" data-bs-target="#wd-delete-assignment-dialog" 
                     onClick={() => setAssignmentId(assignment._id)}>
                       <FaTrash className="text-danger me-3 mb-1 float-end" />
-                      <div>{assignment._id}</div>
+                      {/* <div>{assignment._id}</div> */}
                     </button>
                     
                   </ProtectedRouteFaculty>
@@ -71,8 +95,6 @@ export default function Assignments() {
           </li>
         </ul>
         <DeleteAssignment dialogTitle="Delete Assignment ?" assignment_id={assignmentId}
-                      deleteAssignment={(assignment_id) => {
-                        dispatch(deleteAssignment(assignment_id));
-                      }} />
+                      deleteAssignment={(assignment_id) => removeAssignment(assignment_id)}/>
     </div>
 );}

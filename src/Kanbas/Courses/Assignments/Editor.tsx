@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState } from "react";
 import { addAssignment, updateAssignment } from "./reducer";
+import * as assignmentsClient from "./client";
 
 export default function AssignmentEditor(
     { assignments }:
@@ -20,6 +21,10 @@ export default function AssignmentEditor(
     const [assignmentPoints, setAssignmentPoints] = useState(assignment===null ? 100 : `${assignment[0].points}`);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
     const isFaculty = currentUser.role === "FACULTY";
+    const saveAssignment = async (assignment: any) => {
+        await assignmentsClient.updateAssignment(assignment);
+        dispatch(updateAssignment(assignment));
+      };
     return (
         <div id="wd-assignments-editor">
             <form id="wd-text-fields">
@@ -171,16 +176,15 @@ export default function AssignmentEditor(
                         setDueDate("");
                       }
                     : 
-                    () => {
-                        dispatch(updateAssignment({ ...assignment[0], title: assignmentTitle 
+                    () => {saveAssignment({ ...assignment[0], title: assignmentTitle 
                             , description: assignmentDescription, points: assignmentPoints, 
                             start_date: assignment_start_date, due_date: assignment_due_date
-                        }))}
+                        })
+                    }
                 }
                 >Save</Link>
                 <Link to={`/Kanbas/Courses/${cid}/Assignments`} className="btn btn-secondary me-1 float-end">Cancel</Link>
                 </div>
-
             </form>
         </div>
 );}

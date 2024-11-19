@@ -4,26 +4,30 @@ import Dashboard from "./Dashboard";
 import KanbasNavigation from "./Navigation";
 import Courses from "./Courses";
 import "./styles.css";
-import * as db from "./Database";
-import { useState } from "react";
-import store from "./store";
-import { Provider } from "react-redux";
+import { useEffect, useState } from "react";
+import { Provider, useSelector } from "react-redux";
 import ProtectedRoute from "./Account/ProtectedRoute";
 import ProtectedRouteCourse from "./Account/ProtectedRouteCourse"; 
+import Session from "./Account/Session";
+import * as userClient from "./Account/client";
+import * as courseClient from "./Courses/client";
 
 export default function Kanbas() {
-  const [courses, setCourses] = useState<any[]>(db.courses);
+  const [courses, setCourses] = useState<any[]>([]);
   const [course, setCourse] = useState<any>({
     _id: "1234", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description",
   });
-  const addNewCourse = () => {
-    setCourses([...courses, { ...course, _id: new Date().getTime().toString() }]);
+  const addNewCourse = async () => {
+    const newCourse = await userClient.createCourse(course);
+    setCourses([ ...courses, newCourse ]);
   };
-  const deleteCourse = (courseId: any) => {
+  const deleteCourse = async (courseId: string) => {
+    const status = await courseClient.deleteCourse(courseId);
     setCourses(courses.filter((course) => course._id !== courseId));
   };
-  const updateCourse = () => {
+  const updateCourse = async () => {
+    await courseClient.updateCourse(course);  
     setCourses(
       courses.map((c) => {
         if (c._id === course._id) { 
@@ -34,7 +38,7 @@ export default function Kanbas() {
       })
     );
   };
-  const [ enrollments, setEnrollments ] = useState<any[]>(db.enrollments);
+  const [ enrollments, setEnrollments ] = useState<any[]>([]);
   const [enrollment, setEnrollment] = useState<any>({
     _id: "1234", user: "New User", course: "New Course",
   });
@@ -46,8 +50,20 @@ export default function Kanbas() {
     setEnrollments(enrollments.filter((enrollment) => 
       !(enrollment.course === course_id && enrollment.user === user_id)));
   };
+  const { currentUser } = useSelector((state: any) => state.accountReducer);
+  const fetchCourses = async () => {
+    try {
+      const courses = await userClient.findMyCourses();
+      setCourses(courses);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+  useEffect(() => {
+    fetchCourses();
+  }, [currentUser]);
   return (
-    <Provider store={store}>
+    <Session>
     <div id="wd-kanbas">
             <KanbasNavigation />
           <div className="wd-main-content-offset p-3">
@@ -78,6 +94,6 @@ export default function Kanbas() {
             </Routes>
           </div>
     </div>
-    </Provider>
+    </Session>
   );
 }
