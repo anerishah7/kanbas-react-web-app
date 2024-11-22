@@ -4,11 +4,11 @@ import { useSelector } from "react-redux";
 import ProtectedRouteFaculty from "./Courses/ProtectedRouteFaculty";
 import ProtectedRouteStudent from "./ProtectedRouteStudent";
 
-export default function Dashboard({ courses, course, setCourse, addNewCourse,deleteCourse, 
+export default function Dashboard({ courses, all_courses, course, setCourse, addNewCourse,deleteCourse, 
   updateCourse, 
   enrollments, addNewEnrollment, deleteEnrollment 
 }: {
-  courses: any[]; course: any; setCourse: (course: any) => void;
+  courses: any[]; all_courses: any[]; course: any; setCourse: (course: any) => void;
   addNewCourse: () => void; deleteCourse: (course: any) => void;
   updateCourse: () => void; 
   enrollments: any[]; addNewEnrollment: (course:any, user:any) => void;
@@ -20,6 +20,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
     setEnrollButtonClick(enroll_button_click + 1);
   };
   return (
+    console.log("Enrollments", enrollments),
     <div id="wd-dashboard">
       <h1 id="wd-dashboard-title">Dashboard</h1> 
       <hr />
@@ -42,19 +43,19 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
         onChange={(e) => setCourse({ ...course, description: e.target.value }) }/>
         </ProtectedRouteFaculty>
       <hr />
-      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> 
+      <h2 id="wd-dashboard-published">Published Courses ({all_courses.length})</h2> 
       <hr />
 
       <div id="wd-dashboard-courses" className="row">
       <div className="row row-cols-1 row-cols-md-5 g-4">
         {/* Show only Enrolled Courses */}
       {enroll_button_click>=2 && 
-      courses
-      // .filter((course) =>
-      //     enrollments.some(
-      //       (enrollment: { user: any; course: any; }) =>
-      //         enrollment.user === currentUser._id &&
-      //         enrollment.course === course._id))
+      all_courses
+      .filter((course) =>
+          enrollments.some(
+            (enrollment: { user: any; course: any; }) =>
+              enrollment.user === currentUser._id &&
+              enrollment.course === course._id))
         .map((course) => (
         <div className="wd-dashboard-course col" style={{ width: "300px" }}>
         <div className="card rounded-3 overflow-hidden">
@@ -72,7 +73,7 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
                 <ProtectedRouteStudent>
                 <button className="btn btn-danger float-end" id="wd-enroll-course-click" onClick={(event) => {
                     event.preventDefault();
-                    deleteEnrollment(course._id, currentUser._id);
+                    deleteEnrollment(currentUser._id, course._id);
                   }}>
                   UnEnroll </button>
                 </ProtectedRouteStudent>
@@ -83,8 +84,9 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
       ))}
       {/* Show all courses */}
       {enroll_button_click===1 && 
-      enrollments.map((enrollment) => (enrollment)) && 
-      courses
+      enrollments.map((enrollment) => (enrollment))
+       && 
+      all_courses
         .map((course) => (
         <div className="wd-dashboard-course col" style={{ width: "300px" }}>
         <div className="card rounded-3 overflow-hidden">
@@ -93,52 +95,37 @@ export default function Dashboard({ courses, course, setCourse, addNewCourse,del
             <img src={course.image}  width="100%" height={160}/>
             <div  className="card-body">
               <h5 className="wd-dashboard-course-title card-title">
-              {course.name}
+              {course.name} 
               </h5>
               <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
               {course.description}
               </p>
-             {enrollments.some(
+             { 
+             enrollments.some(
+            (enrollment: { user: string; course: string; }) =>
+            enrollment.user === currentUser._id &&
+            enrollment.course === course._id ) 
+        && <button className="btn btn-primary" > Go </button> }
+        
+        { enrollments.some(
       (enrollment: { user: string; course: string; }) =>
       enrollment.user === currentUser._id &&
-      enrollment.course === course._id
-        ) && <button className="btn btn-primary" > Go </button> }
-              <ProtectedRouteFaculty>
-                <button onClick={(event) => {
-                  event.preventDefault();
-                  deleteCourse(course._id);
-                }} className="btn btn-danger float-end"
-                id="wd-delete-course-click">
-                Delete
-              </button>
-                <button id="wd-edit-course-click"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    setCourse(course);
-                  }}
-                  className="btn btn-warning me-2 float-end" >
-                  Edit
-                </button>
-                </ProtectedRouteFaculty>
-                  {enrollments.some(
-      (enrollment: { user: string; course: string; }) =>
-      enrollment.user === currentUser._id &&
-      enrollment.course === course._id
-        ) && <button className="btn btn-danger float-end" id="wd-enroll-course-click" 
+      enrollment.course === course._id) 
+      && <button className="btn btn-danger float-end" id="wd-enroll-course-click" 
                     onClick={(event) => {
                       event.preventDefault();
-                      deleteEnrollment(course._id, currentUser._id);
+                      deleteEnrollment(currentUser._id, course._id);
                     }}>
                     UnEnroll </button>}
                 
-                { !enrollments.some(
+      { !enrollments.some(
       (enrollment: { user: string; course: string; }) =>
       enrollment.user === currentUser._id &&
-      enrollment.course === course._id
-        ) && <button className="btn btn-success float-end" id="wd-unenroll-course-click" 
+      enrollment.course === course._id) 
+        && <button className="btn btn-success float-end" id="wd-unenroll-course-click" 
                   onClick={(event) => {
                     event.preventDefault();
-                    addNewEnrollment(course._id, currentUser._id);
+                    addNewEnrollment(currentUser._id, course._id);
                   }}>
                    Enroll </button>}
             </div>
