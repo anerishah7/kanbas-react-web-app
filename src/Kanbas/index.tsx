@@ -44,10 +44,6 @@ export default function Kanbas() {
   const [enrollment, setEnrollment] = useState<any>({
     _id: "1234", user: "New User", course: "New Course",
   });
-  // const addNewEnrollment = (user_id: any, course_id:any) => {
-  //   setEnrollments([...enrollments, { ...enrollment, _id: new Date().getTime().toString(), 
-  //     course: course_id, user: user_id }]);
-  // };
   const removeEnrollment = async (user_id: string, course_id: string) => {
     await userClient.deleteEnrollment(user_id, course_id);
     setEnrollments(enrollments.filter((enrollment) => 
@@ -57,10 +53,6 @@ export default function Kanbas() {
     const newEnrollment = await userClient.addEnrollment(user_id, course_id);
     setEnrollments([...enrollments, newEnrollment]);
   };
-  // const deleteEnrollment = (user_id: any, course_id:any) => {
-  //   setEnrollments(enrollments.filter((enrollment) => 
-  //     !(enrollment.course === course_id && enrollment.user === user_id)));
-  // };
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   const fetchCourses = async () => {
     try {

@@ -9,6 +9,13 @@ export default function Signup() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const signup = async () => {
+    setUser({ ...user, 
+      firstName: "New",
+      lastName: `UserNew`,
+      email: `email-new@neu.edu`,
+      section: "S101",
+      role: "STUDENT",
+    });
     const currentUser = await client.signup(user);
     dispatch(setCurrentUser(currentUser));
     navigate("/Kanbas/Account/Profile");
@@ -23,12 +30,4 @@ export default function Signup() {
       <button onClick={signup} className="wd-signup-btn btn btn-primary mb-2 w-100"> Sign up </button><br />
       <Link to="/Kanbas/Account/Signin" className="wd-signin-link">Sign in</Link>
     </div>
-    // <div id="wd-signup-screen">
-    //   <h3>Sign up</h3>
-    //   <input placeholder="username" className="form-control mb-2"/>
-    //   <input placeholder="password" type="password" className="form-control mb-2"/>
-    //   {/* <input placeholder="verify password" type="password" className="form-control mb-2"/> */}
-    //   <Link to="/Kanbas/Account/Profile" className="btn btn-primary w-100"> Sign up </Link><br />
-    //   <Link to="/Kanbas/Account/Signin" >Sign in</Link>
-    // </div>
 );}
