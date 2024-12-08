@@ -15,18 +15,18 @@ import * as courseClient from "./Courses/client";
 export default function Kanbas() {
   const dispatch = useDispatch();
   const [courses, setCourses] = useState<any[]>([]);
-  const [all_courses, setAllCourses] = useState<any[]>([]);
+  const [enrolling, setEnrolling] = useState<boolean>(false);
   const [course, setCourse] = useState<any>({
     _id: "1234", name: "New Course", number: "New Number",
     startDate: "2023-09-10", endDate: "2023-12-15", description: "New Description",
   });
   const addNewCourse = async () => {
-    const newCourse = await userClient.createCourse(course);
+    const newCourse = await courseClient.createCourse(course);
     setCourses([ ...courses, newCourse ]);
   };
   const deleteCourse = async (courseId: string) => {
     const status = await courseClient.deleteCourse(courseId);
-    setCourses(courses.filter((course) => course._id !== courseId));
+    setCourses(courses.filter((courses) => course._id !== courseId));
   };
   const updateCourse = async () => {
     await courseClient.updateCourse(course);  
@@ -54,21 +54,60 @@ export default function Kanbas() {
     setEnrollments([...enrollments, newEnrollment]);
   };
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const fetchCourses = async () => {
+  const findCoursesForUser = async () => {
     try {
-      const courses = await userClient.findMyCourses();
-      const all_courses = await userClient.findAllCourses();
+      const courses = await userClient.findCoursesForUser(currentUser._id);
       const all_enrollments = await userClient.findAllEnrollments();
       setCourses(courses);
-      setAllCourses(all_courses);
+      setEnrollments(all_enrollments);
+    } catch (error) {
+      console.error(error);
+    }
+  }; 
+  const updateEnrollment = async (courseId: string, enrolled: boolean) => {
+    if (enrolled) {
+      await userClient.enrollIntoCourse(currentUser._id, courseId);
+    } else {
+      await userClient.unenrollFromCourse(currentUser._id, courseId);
+    }
+    setCourses(
+      courses.map((course) => {
+        if (course._id === courseId) {
+          return { ...course, enrolled: enrolled };
+        } else {
+          return course;
+        }
+      })
+    );
+  };  
+  const fetchCourses = async () => {
+    try {
+      // const courses = await userClient.findMyCourses();
+      const enrolledCourses = await userClient.findCoursesForUser(
+        currentUser._id
+      ); 
+      const all_courses = await courseClient.fetchAllCourses();
+      const all_enrollments = await userClient.findAllEnrollments();
+      const courses = all_courses.map((course: any) => {
+        if (enrolledCourses.find((c: any) => c._id === course._id)) {
+          return { ...course, enrolled: true };
+        } else {
+          return course;
+        }
+      }); 
+      setCourses(courses);
       setEnrollments(all_enrollments);
     } catch (error) {
       console.error(error);
     }
   };
   useEffect(() => {
-    fetchCourses();
-  }, [currentUser]);
+    if (enrolling) {
+      fetchCourses();
+    } else {
+      findCoursesForUser();
+    }
+  }, [currentUser, enrolling]);
   return (
     <Session>
     <div id="wd-kanbas">
@@ -81,15 +120,13 @@ export default function Kanbas() {
                   <ProtectedRoute>
                     <Dashboard
                       courses={courses}
-                      all_courses={all_courses}
                       course={course}
                       setCourse={setCourse}
                       addNewCourse={addNewCourse}
                       deleteCourse={deleteCourse}
                       updateCourse={updateCourse}
-                      enrollments={enrollments}
-                      addNewEnrollment={saveEnrollment}
-                      deleteEnrollment={removeEnrollment}
+                      enrolling={enrolling} setEnrolling={setEnrolling}
+                      updateEnrollment={updateEnrollment}
                       />
                   </ProtectedRoute>
                 } />

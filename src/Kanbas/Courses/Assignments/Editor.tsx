@@ -20,7 +20,7 @@ export default function AssignmentEditor(
     const [assignment_due_date, setDueDate] = useState(assignment===null ? date.toISOString().slice(0, 10) : `${assignment[0].due_date}`);
     const [assignmentPoints, setAssignmentPoints] = useState(assignment===null ? 100 : `${assignment[0].points}`);
     const { currentUser } = useSelector((state: any) => state.accountReducer);
-    const isFaculty = currentUser.role === "FACULTY";
+    const isFaculty = currentUser.role === "FACULTY" || currentUser.role === "ADMIN";
     const saveAssignment = async (assignment: any) => {
         await assignmentsClient.updateAssignment(assignment);
         dispatch(updateAssignment(assignment));

@@ -5,12 +5,14 @@ export default function ProtectedRouteCourse({ children, enrollments }: { childr
   const { currentUser } = useSelector((state: any) => state.accountReducer);
   // const {enrollments} = useSelector((state: any) => state.enrollmentsReducer);
   const {cid} = useParams();
+  console.log(cid);
   const enrolled = enrollments.some(
     (enrollment: { user: string; course: string; }) =>
     enrollment.user === currentUser._id &&
     enrollment.course === cid
 );
-console.log(enrolled);
+// const enrolled = enrolled_users.find(currentUser._id);
+console.log(enrollments);
   if (currentUser.role === "STUDENT") {
     if (enrolled) {
       return children;

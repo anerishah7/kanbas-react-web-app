@@ -8,11 +8,14 @@ import PeopleTable from "./People/Table";
 import { Navigate, Route, Routes, useParams, useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa6";
 import { addAssignment, updateAssignment, deleteAssignment } from "./Assignments/reducer";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
+// import * as courseClient from "./client.ts";
+import * as coursesClient from "./client";
 
 export default function Courses({ courses }: { courses: any[]; }) {
   const { cid } = useParams();
+  const [users, setUsers] = useState<any[]>([]);
   const course = courses.find((course) => course._id === cid);
   const { pathname } = useLocation();
   const { assignments } = useSelector((state: any) => state.assignmentsReducer);
@@ -20,6 +23,13 @@ export default function Courses({ courses }: { courses: any[]; }) {
     (assignment: { course: string | undefined; }) => assignment.course === cid
   );
   const dispatch = useDispatch();
+  const fetchUsers = async () => {
+    const users = await coursesClient.findUsersForCourse(cid as string);
+    setUsers(users);
+ };
+  useEffect(() => {
+    fetchUsers();
+  }, [cid]);
   return (
     <div id="wd-courses">
       <h2 className="text-danger">
@@ -41,7 +51,7 @@ export default function Courses({ courses }: { courses: any[]; }) {
                   />}
                   />
               <Route path="Quizzes" element={<Quizzes />} />
-              <Route path="People" element={<PeopleTable />} />
+              <Route path="People" element={<PeopleTable users={users}/>} />
             </Routes>
             </div></div>
     </div>

@@ -3,32 +3,31 @@ import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import ProtectedRouteFaculty from "./Courses/ProtectedRouteFaculty";
 import ProtectedRouteStudent from "./ProtectedRouteStudent";
+import ProtectedRouteNotAdmin from "./ProtectedRouteNotAdmin";
 
-export default function Dashboard({ courses, all_courses, course, setCourse, addNewCourse,deleteCourse, 
+export default function Dashboard({ courses, 
+  course, setCourse, addNewCourse,deleteCourse, 
   updateCourse, 
-  enrollments, addNewEnrollment, deleteEnrollment 
+  enrolling, setEnrolling , updateEnrollment
 }: {
-  courses: any[]; all_courses: any[]; course: any; setCourse: (course: any) => void;
+  courses: any[]; 
+  course: any; setCourse: (course: any) => void;
   addNewCourse: () => void; deleteCourse: (course: any) => void;
   updateCourse: () => void; 
-  enrollments: any[]; addNewEnrollment: (course:any, user:any) => void;
-  deleteEnrollment: (course:any, user:any) => void;
+  enrolling: boolean; setEnrolling: (enrolling: boolean) => void;
+  updateEnrollment: (courseId: string, enrolled: boolean) => void 
 }) {
   const { currentUser } = useSelector((state: any) => state.accountReducer);
-  const [enroll_button_click, setEnrollButtonClick] = useState(0);
-  const count_enroll_button_click = () => {
-    setEnrollButtonClick(enroll_button_click + 1);
-  };
   return (
-    console.log("Enrollments", enrollments),
     <div id="wd-dashboard">
-      <h1 id="wd-dashboard-title">Dashboard</h1> 
+      <h1 id="wd-dashboard-title">Dashboard 
+        <ProtectedRouteNotAdmin>
+      <button onClick={() => setEnrolling(!enrolling)} className="float-end btn btn-primary" >
+          {enrolling ? "My Courses" : "All Courses"}
+        </button>
+        </ProtectedRouteNotAdmin>
+        </h1> 
       <hr />
-      <ProtectedRouteStudent>
-      <button className="btn btn-primary float-end"
-                  id="wd-enrollment"
-                  onClick={count_enroll_button_click} > Enrollments </button>
-        </ProtectedRouteStudent>
       <ProtectedRouteFaculty>
       <h5>New Course
           <button className="btn btn-primary float-end"
@@ -43,19 +42,14 @@ export default function Dashboard({ courses, all_courses, course, setCourse, add
         onChange={(e) => setCourse({ ...course, description: e.target.value }) }/>
         </ProtectedRouteFaculty>
       <hr />
-      <h2 id="wd-dashboard-published">Published Courses ({all_courses.length})</h2> 
+      <h2 id="wd-dashboard-published">Published Courses ({courses.length})</h2> 
       <hr />
 
       <div id="wd-dashboard-courses" className="row">
       <div className="row row-cols-1 row-cols-md-5 g-4">
         {/* Show only Enrolled Courses */}
-      {enroll_button_click>=2 && 
-      all_courses
-      .filter((course) =>
-          enrollments.some(
-            (enrollment: { user: any; course: any; }) =>
-              enrollment.user === currentUser._id &&
-              enrollment.course === course._id))
+        {
+      courses
         .map((course) => (
         <div className="wd-dashboard-course col" style={{ width: "300px" }}>
         <div className="card rounded-3 overflow-hidden">
@@ -64,93 +58,22 @@ export default function Dashboard({ courses, all_courses, course, setCourse, add
             <img src={course.image}  width="100%" height={160}/>
             <div  className="card-body">
               <h5 className="wd-dashboard-course-title card-title">
+                <ProtectedRouteNotAdmin>
+              {enrolling && (
+              <button  onClick={(event) => {
+                event.preventDefault();
+                updateEnrollment(course._id, !course.enrolled);}}
+              className={`btn ${ course.enrolled ? "btn-danger" : "btn-success" } float-end`} >
+                {course.enrolled ? "Unenroll" : "Enroll"}
+              </button>
+            )} </ProtectedRouteNotAdmin>
               {course.name}
               </h5>
               <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
               {course.description}
               </p>
               <button className="btn btn-primary"> Go </button>
-                <ProtectedRouteStudent>
-                <button className="btn btn-danger float-end" id="wd-enroll-course-click" onClick={(event) => {
-                    event.preventDefault();
-                    deleteEnrollment(currentUser._id, course._id);
-                  }}>
-                  UnEnroll </button>
-                </ProtectedRouteStudent>
-            </div>
-          </Link>
-          </div>
-        </div>
-      ))}
-      {/* Show all courses */}
-      {enroll_button_click===1 && 
-      enrollments.map((enrollment) => (enrollment))
-       && 
-      all_courses
-        .map((course) => (
-        <div className="wd-dashboard-course col" style={{ width: "300px" }}>
-        <div className="card rounded-3 overflow-hidden">
-          <Link className="wd-dashboard-course-link text-decoration-none text-dark"
-                to={`/Kanbas/Courses/${course._id}/Home`}>
-            <img src={course.image}  width="100%" height={160}/>
-            <div  className="card-body">
-              <h5 className="wd-dashboard-course-title card-title">
-              {course.name} 
-              </h5>
-              <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
-              {course.description}
-              </p>
-             { 
-             enrollments.some(
-            (enrollment: { user: string; course: string; }) =>
-            enrollment.user === currentUser._id &&
-            enrollment.course === course._id ) 
-        && <button className="btn btn-primary" > Go </button> }
-        
-        { enrollments.some(
-      (enrollment: { user: string; course: string; }) =>
-      enrollment.user === currentUser._id &&
-      enrollment.course === course._id) 
-      && <button className="btn btn-danger float-end" id="wd-enroll-course-click" 
-                    onClick={(event) => {
-                      event.preventDefault();
-                      deleteEnrollment(currentUser._id, course._id);
-                    }}>
-                    UnEnroll </button>}
-                
-      { !enrollments.some(
-      (enrollment: { user: string; course: string; }) =>
-      enrollment.user === currentUser._id &&
-      enrollment.course === course._id) 
-        && <button className="btn btn-success float-end" id="wd-unenroll-course-click" 
-                  onClick={(event) => {
-                    event.preventDefault();
-                    addNewEnrollment(currentUser._id, course._id);
-                  }}>
-                   Enroll </button>}
-            </div>
-          </Link>
-          </div>
-        </div>
-      ))}
-       <ProtectedRouteFaculty>
-        {/* Show all courses */}
-      {courses
-        .map((course) => (
-        <div className="wd-dashboard-course col" style={{ width: "300px" }}>
-        <div className="card rounded-3 overflow-hidden">
-          <Link className="wd-dashboard-course-link text-decoration-none text-dark"
-                to={`/Kanbas/Courses/${course._id}/Home`}>
-            <img src={course.image}  width="100%" height={160}/>
-            <div  className="card-body">
-              <h5 className="wd-dashboard-course-title card-title">
-              {course.name}
-              </h5>
-              <p className="wd-dashboard-course-title card-text overflow-y-hidden" style={{ maxHeight: 100 }}>
-              {course.description}
-              </p>
-              <button className="btn btn-primary" > Go </button>
-              <ProtectedRouteFaculty>
+                <ProtectedRouteFaculty>
                 <button onClick={(event) => {
                   event.preventDefault();
                   deleteCourse(course._id);
@@ -172,8 +95,6 @@ export default function Dashboard({ courses, all_courses, course, setCourse, add
           </div>
         </div>
       ))}
-        </ProtectedRouteFaculty>
-      
       </div>
     </div>
     </div>

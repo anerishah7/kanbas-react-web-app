@@ -24,6 +24,7 @@ export default function Assignments() {
     const assignments = await coursesClient.findAssignmentsForCourse(cid as string);
     dispatch(setAssignments(assignments));
   };
+  console.log(assignments);
   const createAssignmentForCourse = async () => {
     if (!cid) return;
     const newAssignment = { 
@@ -56,7 +57,6 @@ export default function Assignments() {
              </div>
             <ul className="wd-lessons list-group rounded-0">
             {assignments
-              // .filter((assignment: any) => assignment.course === cid)
               .map((assignment: any) => (
                 <li className="wd-lesson list-group-item p-3 ps-1">
                 <table border={0} width="100%">
